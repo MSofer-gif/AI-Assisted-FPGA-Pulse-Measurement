@@ -5,8 +5,8 @@
 
 **A high-precision, real-time digital pulse measurement system implemented on an Intel MAX 10 FPGA (DE10-Lite board). This project blends concurrent Verilog hardware logic with C-based software running on a Nios II soft-core processor, developed extensively using AI-driven debugging methodologies.**
 
-**Developers:** Moshe Simha Sofer & Yehonatan Ilan 
-**Institution:** Tel Aviv University, The Iby and Aladar Fleischman Faculty of Engineering
+**Developers:** Moshe Sofer & Yehonatan Ilan 
+**Institution:** Tel Aviv University,Faculty of Engineering
 
 ---
 
