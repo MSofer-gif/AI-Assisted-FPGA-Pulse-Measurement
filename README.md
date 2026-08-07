@@ -1,38 +1,38 @@
 # AI-Driven FPGA Pulse Measurement System
 
-**A high-precision, real-time digital pulse measurement system implemented on an Intel MAX 10 FPGA (DE10-Lite board)[cite: 1, 2]. This project blends concurrent Verilog hardware logic with C-based software running on a Nios II soft-core processor, developed extensively using AI-driven debugging methodologies[cite: 1].**
+**A high-precision, real-time digital pulse measurement system implemented on an Intel MAX 10 FPGA (DE10-Lite board). This project blends concurrent Verilog hardware logic with C-based software running on a Nios II soft-core processor, developed extensively using AI-driven debugging methodologies.**
 
-**Developers:** Moshe Simha Sofer & Yehonatan Ilan[cite: 1, 2]  
-**Institution:** Tel Aviv University, The Iby and Aladar Fleischman Faculty of Engineering[cite: 1, 2]
+**Developers:** Moshe Simha Sofer & Yehonatan Ilan 
+**Institution:** Tel Aviv University, The Iby and Aladar Fleischman Faculty of Engineering
 
 ---
 
 ## 📖 Project Overview
 
-Measuring digital signals with high precision in real-time is a critical requirement in embedded control systems[cite: 1]. Traditional Microcontroller Units (MCUs) often struggle with strict real-time constraints due to software execution delays, interrupt latency, and sequential processing jitter[cite: 1]. 
+Measuring digital signals with high precision in real-time is a critical requirement in embedded control systems. Traditional Microcontroller Units (MCUs) often struggle with strict real-time constraints due to software execution delays, interrupt latency, and sequential processing jitter. 
 
-This project provides a robust solution by leveraging the parallel processing power of FPGA logic for critical time-counting operations, combined with the flexibility of an embedded Nios II processor for data management and UI[cite: 1]. The system operates on a 50MHz clock, achieving exact 1ms measurement resolution[cite: 1]. A unique aspect of this development process was the heavy integration of Generative AI throughout the RTL design and physical debugging phases to bridge the gap between theoretical logic and physical hardware behavior[cite: 1].
+This project provides a robust solution by leveraging the parallel processing power of FPGA logic for critical time-counting operations, combined with the flexibility of an embedded Nios II processor for data management and UI. The system operates on a 50MHz clock, achieving exact 1ms measurement resolution. A unique aspect of this development process was the heavy integration of Generative AI throughout the RTL design and physical debugging phases to bridge the gap between theoretical logic and physical hardware behavior.
 
 ## ✨ Key Features
 
-* **High-Precision Timing:** Hardware-level clock cycle counting driven by the FPGA's 50MHz oscillator[cite: 1]. A custom prescaler divides the clock to generate exact 1ms ticks, ensuring precision without software overhead[cite: 1].
+* **High-Precision Timing:** Hardware-level clock cycle counting driven by the FPGA's 50MHz oscillator. A custom prescaler divides the clock to generate exact 1ms ticks, ensuring precision without software overhead.
 * **Dual Operation Modes:**
-  * *Normal Stopwatch Mode:* Measures pulses triggered by physical push-buttons (`KEY[0]`/`KEY[1]`) or a level-detected switch (`SW[9]`)[cite: 1].
-  * *Stack Memory Mode:* A software-managed circular buffer stores the last 10 measurements, allowing the user to browse history via an external LCD[cite: 1].
-* **Rich User Interface:** Real-time cascaded BCD 7-segment display for live counting, coupled with an external 16x2 UART LCD (operating at 9600 Baud) for detailed status, timeout errors, and memory readouts[cite: 1, 2].
+  * *Normal Stopwatch Mode:* Measures pulses triggered by physical push-buttons (`KEY[0]`/`KEY[1]`) or a level-detected switch (`SW[9]`).
+  * *Stack Memory Mode:* A software-managed circular buffer stores the last 10 measurements, allowing the user to browse history via an external LCD.
+* **Rich User Interface:** Real-time cascaded BCD 7-segment display for live counting, coupled with an external 16x2 UART LCD (operating at 9600 Baud) for detailed status, timeout errors, and memory readouts.
 * **Audio Feedback (PWM):** A custom hardware speaker module controlled by the Nios II processor generates specific frequencies (square waves) corresponding to system events (e.g., success tones, overflow warnings, and classical melodies)[cite: 1, 2, 7, 11].
-* **Fast Test Mode:** A dedicated hardware switch (`SW[3]`) accelerates the counting and display speed by 5x to allow rapid functional verification of long-duration measurements (up to the 5-minute timeout limit)[cite: 1, 2].
+* **Fast Test Mode:** A dedicated hardware switch (`SW[3]`) accelerates the counting and display speed by 5x to allow rapid functional verification of long-duration measurements (up to the 5-minute timeout limit).
 
 ---
 
 ## 🏗️ System Architecture
 
-The architecture follows a Top-Down modular design, distinctly separating time-critical hardware tasks from software-level data processing[cite: 1].
+The architecture follows a Top-Down modular design, distinctly separating time-critical hardware tasks from software-level data processing.
 
 [כאן יש להעלות תמונה: "איור 8 - מבנה המערכת" מתוך ספר הפרויקט `book_3422.docx` בעמוד 10, או משקופית 5 במצגת `Final_final_pres_3422.pdf`]
 
 ### 1. Hardware Layer (Verilog RTL)
-* **Debouncers & Edge Detectors:** Mechanical switches generate contact bounce—a rapid sequence of voltage spikes[cite: 1]. Custom saturating-counter debouncers were implemented: 1.31ms delay for buttons (producing a single-cycle pulse) and a 1ms stable-level verification for switches[cite: 1, 6].
+* **Debouncers & Edge Detectors:** Mechanical switches generate contact bounce—a rapid sequence of voltage spikes. Custom saturating-counter debouncers were implemented: 1.31ms delay for buttons (producing a single-cycle pulse) and a 1ms stable-level verification for switches[cite: 1, 6].
 * **Finite State Machine (FSM):** The central control unit featuring three main states: `IDLE`, `RUN`, and `DONE`[cite: 1, 8]. It manages the flow of the measurement, enforces input mode-locking, and controls the measurement counters[cite: 1, 8].
 * **Measurement Unit:** Contains the 32-bit counter and relies on two critical synchronization mechanisms to bridge the fast hardware and the slower software domains:
   * **Shadow Register:** Captures the final counter value immediately when the pulse ends, preventing race conditions before the Nios II processor reads the data[cite: 1, 10].
@@ -66,23 +66,23 @@ During physical integration on the DE10-Lite, several discrepancies between the 
 
 ## 🔬 Performance & Hardware Verification
 
-The entire system was rigorously validated against a Keysight Mixed Signal Oscilloscope (MSO-X 3034A) serving as the ground truth[cite: 1].
+The entire system was rigorously validated against a Keysight Mixed Signal Oscilloscope (MSO-X 3034A) serving as the ground truth.
 
-* **Timing Accuracy:** 30 physical pulse measurements were tested, ranging from 300ms to nearly 5 minutes (299.583 seconds)[cite: 1]. The system achieved a **100% success rate (0% errors)** with an average deviation of just 3.94ms, easily surpassing the project's ±50ms strict requirement[cite: 1].
-* **Resource Utilization:** The RTL design is incredibly efficient, utilizing only 2,404 Logic Elements (~5% of the MAX 10's 49,760 LEs)[cite: 1]. The Nios II processor consumes about 63% of the available on-chip memory[cite: 1].
-* **Timing Analysis:** Multicorner Timing Analysis confirmed optimal stability with a Total Negative Slack (TNS) of 0.0 and zero Setup/Hold violations[cite: 1]. The design supports an $F_{max}$ of 81.26 MHz, providing a massive safety margin over the 50MHz operating frequency[cite: 1].
+* **Timing Accuracy:** 30 physical pulse measurements were tested, ranging from 300ms to nearly 5 minutes (299.583 seconds). The system achieved a **100% success rate (0% errors)** with an average deviation of just 3.94ms, easily surpassing the project's ±50ms strict requirement.
+* **Resource Utilization:** The RTL design is incredibly efficient, utilizing only 2,404 Logic Elements (~5% of the MAX 10's 49,760 LEs). The Nios II processor consumes about 63% of the available on-chip memory.
+* **Timing Analysis:** Multicorner Timing Analysis confirmed optimal stability with a Total Negative Slack (TNS) of 0.0 and zero Setup/Hold violations. The design supports an $F_{max}$ of 81.26 MHz, providing a massive safety margin over the 50MHz operating frequency.
 
 [כאן יש להעלות תמונה: `WhatsApp Image 2026-07-21 at 12.57.44 (1).jpg` המציגה את אות ה-UART באוסילוסקופ]
 
-*Oscilloscope verification: The capture above displays a UART data burst sent from the FPGA to the LCD[cite: 1]. The cursor measurement of ~2.6ms perfectly aligns with the theoretical bit-width (104.16µs) of a 9600 Baud transmission for a multi-character string, visually proving the exactness of the hardware dividers[cite: 1].*
+*Oscilloscope verification: The capture above displays a UART data burst sent from the FPGA to the LCD. The cursor measurement of ~2.6ms perfectly aligns with the theoretical bit-width (104.16µs) of a 9600 Baud transmission for a multi-character string, visually proving the exactness of the hardware dividers.*
 
 ---
 
 ## 🎛️ Hardware Interface & UI
 
-* **DE10-Lite Board:** Interacts via `KEY[0:1]` and `SW[0:9]`[cite: 1]. Features 6 cascaded 7-Segment displays providing real-time visual feedback of the counters[cite: 1, 12].
+* **DE10-Lite Board:** Interacts via `KEY[0:1]` and `SW[0:9]`. Features 6 cascaded 7-Segment displays providing real-time visual feedback of the counters[cite: 1, 12].
 * **External SerLCD:** Connected via Arduino headers to display formatted time strings, memory stacks, overflow warnings, and dynamic status messages[cite: 1, 9].
-* **Audio Module:** A custom-designed speaker amplification circuit[cite: 1]. Driven by the FPGA's `ARDUINO_IO_11` pin, it utilizes PWM frequency division dictated by the Nios II software (`Nios_Speaker_Ctrl.v`) to output diverse audible alerts[cite: 1, 11, 13].
+* **Audio Module:** A custom-designed speaker amplification circuit. Driven by the FPGA's `ARDUINO_IO_11` pin, it utilizes PWM frequency division dictated by the Nios II software (`Nios_Speaker_Ctrl.v`) to output diverse audible alerts[cite: 1, 11, 13].
 
 [כאן יש להעלות תמונה: "איור 9 - ממשק המשתמש החומרתי" מתוך עמוד 14 בספר הפרויקט `book_3422.docx` או משקופית 12 במצגת]
 [כאן יש להעלות תמונה: המעגל המודפס של הרמקול `צילום מסך 2026-05-07 ב-11.31.31.jpg` ו-`11.31.11.png`]
