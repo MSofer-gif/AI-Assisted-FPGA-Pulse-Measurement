@@ -1,7 +1,7 @@
 # AI-Driven FPGA Pulse Measurement System
 
 **B.Sc. Final Project - School of Electrical Engineering**  
-**Tel Aviv University, The Iby and Aladar Fleischman Faculty of Engineering**
+**Tel Aviv University, Faculty of Engineering**
 
 **A high-precision, real-time digital pulse measurement system implemented on an Intel MAX 10 FPGA (DE10-Lite board). This project blends concurrent Verilog hardware logic with C-based software running on a Nios II soft-core processor, developed extensively using AI-driven debugging methodologies.**
 
