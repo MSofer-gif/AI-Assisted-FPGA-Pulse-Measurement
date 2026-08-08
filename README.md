@@ -1,4 +1,4 @@
-# AI-Driven FPGA Pulse Measurement System
+# AI Assisted FPGA Pulse Measurement
 
 **B.Sc. Final Project - School of Electrical Engineering**  
 **Tel Aviv University, Faculty of Engineering**
