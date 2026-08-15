@@ -16,7 +16,7 @@ module LCD_Driver (
     // ==========================================
     parameter CLK_FREQ   = 50000000;
     parameter BAUD_RATE  = 9600;
-    parameter BIT_PERIOD = CLK_FREQ / BAUD_RATE; // ~5208 cycles
+    parameter BIT_PERIOD = CLK_FREQ / BAUD_RATE;  // ~5208 cycles
 
     // Internal Registers
     reg [15:0] bit_timer;
