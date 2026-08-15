@@ -1,12 +1,12 @@
-# AI Assisted FPGA Pulse Measurement
+# AI-Assisted FPGA Pulse Measurement System
 
 **B.Sc. Final Project - School of Electrical Engineering**  
-**Tel Aviv University, Faculty of Engineering**
+**Tel Aviv University, The Iby and Aladar Fleischman Faculty of Engineering**
 
 **A high-precision, real-time digital pulse measurement system implemented on an Intel MAX 10 FPGA (DE10-Lite board). This project blends concurrent Verilog hardware logic with C-based software running on a Nios II soft-core processor, developed extensively using AI-driven debugging methodologies.**
 
-**Developers:** Moshe Sofer & Yehonatan Ilan 
-**Institution:** Tel Aviv University,Faculty of Engineering
+**Developers:** Moshe Simha Sofer & Yehonatan Ilan  
+**Institution:** Tel Aviv University, Faculty of Engineering
 
 ---
 
@@ -32,7 +32,7 @@ This project provides a robust solution by leveraging the parallel processing po
 
 The architecture follows a Top-Down modular design, distinctly separating time-critical hardware tasks from software-level data processing.
 
-[כאן יש להעלות תמונה: "איור 8 - מבנה המערכת" מתוך ספר הפרויקט `book_3422.docx` בעמוד 10, או משקופית 5 במצגת `Final_final_pres_3422.pdf`]
+![System Architecture Block Diagram](assets/system.png)
 
 ### 1. Hardware Layer (Verilog RTL)
 * **Debouncers & Edge Detectors:** Mechanical switches generate contact bounce—a rapid sequence of voltage spikes. Custom saturating-counter debouncers were implemented: 1.31ms delay for buttons (producing a single-cycle pulse) and a 1ms stable-level verification for switches.
@@ -45,7 +45,9 @@ The architecture follows a Top-Down modular design, distinctly separating time-c
 ### 2. Software Layer (Nios II & Qsys Integration)
 * **Event-Driven C Code:** Executed on the embedded Nios II soft-core processor. The software polls Avalon PIO registers to monitor FSM states and user inputs. It is responsible for formatting raw cycle counts into human-readable strings (minutes, seconds, ms), managing the circular memory buffer, and driving the LCD and audio peripherals.
 
-[כאן יש להעלות תמונה: `לכידה.PNG` או `לכידה2.PNG` המציגות את ה-Address Map של ה-PIO ב-Platform Designer]
+*Below: The Qsys (Platform Designer) Address Map, showing the memory allocation for the custom hardware peripherals.*
+![Qsys Address Map Part 1](assets/qsys1.PNG)
+![Qsys Address Map Part 2](assets/qsys2.PNG)
 
 ---
 
@@ -55,15 +57,19 @@ During physical integration on the DE10-Lite, several discrepancies between the 
 
 ### Case Study 1: Resolving Hardware Bouncing & State Locking (`SW[9]`)
 **The Problem:** Introducing `SW[9]` as a measurement trigger caused the FSM to become highly unstable, rapidly jumping between `RUN` and `STOP` states. The switch provided a continuous logic high (level) rather than a single pulse, and introduced severe mechanical bouncing.  
-**The Solution:** AI analysis guided the creation of a multi-layered filtering block within `Top_System.v`. We implemented a custom `Level-Debouncer` to clean the signal, followed by a pipeline `Edge Detector` to generate a 1-cycle start pulse. Furthermore, a **Mode Locking** MUX was designed to lock the FSM to the first detected input (Switch or Button) and mask all other inputs until the measurement completes, guaranteeing bulletproof operation=.
+**The Solution:** AI analysis guided the creation of a multi-layered filtering block within `Top_System.v`. We implemented a custom `Level-Debouncer` to clean the signal, followed by a pipeline `Edge Detector` to generate a 1-cycle start pulse. Furthermore, a **Mode Locking** MUX was designed to lock the FSM to the first detected input (Switch or Button) and mask all other inputs until the measurement completes, guaranteeing bulletproof operation.
 
-[כאן יש להעלות תמונה: קוד ה-Level Debouncer וה-MUX מתוך המסמך `פרק AI.docx` - תמונות `final1.jpg` ו-`final2.png`]
+![AI Prompt for FSM Bug](assets/ai_prompt_fsm_bug.png)
+
+*Below: The implemented hardware logic resulting from the AI debugging process - featuring the robust Level-Debouncer and Mode-Locking MUX.*
+![Level Debouncer Implementation](assets/post%20ai%20debbug.png)
+![Mode Locking MUX Logic](assets/post%20ai%20debbug2.png)
 
 ### Case Study 2: Event-Driven LCD Communication
 **The Problem:** Reading the `STACK` mode toggle switch (`SW[7]`) directly inside the main `while(1)` polling loop crashed the system. The processor continuously read the high state of the switch and flooded the custom UART driver with print commands, causing the code to freeze while waiting for the LCD's `uart_busy` flag to clear.  
 **The Solution:** Using AI, the software architecture was shifted to a state-change tracking model. The Nios II now compares `last_stack_mode` against `sw7_mode`, sending LCD clear and print commands strictly upon detecting an edge transition. This completely resolved the data bottleneck.
 
-[כאן יש להעלות תמונה: פונקציית העיצוב מתוך המסמך `פרק AI.docx` - תמונה `צילום מסך 2026-07-03 ב-16.41.07.png`]
+![AI Solution for Event-Driven LCD](assets/ai_solution_lcd_state.png)
 
 ---
 
@@ -71,13 +77,19 @@ During physical integration on the DE10-Lite, several discrepancies between the 
 
 The entire system was rigorously validated against a Keysight Mixed Signal Oscilloscope (MSO-X 3034A) serving as the ground truth.
 
-* **Timing Accuracy:** 30 physical pulse measurements were tested, ranging from 300ms to nearly 5 minutes (299.583 seconds). The system achieved a **100% success rate (0% errors)** with an average deviation of just 3.94ms, easily surpassing the project's ±50ms strict requirement.
-* **Resource Utilization:** The RTL design is incredibly efficient, utilizing only 2,404 Logic Elements (~5% of the MAX 10's 49,760 LEs). The Nios II processor consumes about 63% of the available on-chip memory.
-* **Timing Analysis:** Multicorner Timing Analysis confirmed optimal stability with a Total Negative Slack (TNS) of 0.0 and zero Setup/Hold violations. The design supports an $F_{max}$ of 81.26 MHz, providing a massive safety margin over the 50MHz operating frequency.
+* **Timing Accuracy:** 30 physical pulse measurements were tested, ranging from 300ms to nearly 5 minutes. The system achieved a **100% success rate (0% errors)** with an average deviation of just 3.94ms, easily surpassing the project's ±50ms strict requirement.
+* **Resource Utilization:** The RTL design is incredibly efficient, utilizing only 2,404 Logic Elements (~5% of the MAX 10's capacity). 
+![Flow Summary - Resource Utilization](assets/flow%20summary.jpg)
 
-[כאן יש להעלות תמונה: `WhatsApp Image 2026-07-21 at 12.57.44 (1).jpg` המציגה את אות ה-UART באוסילוסקופ]
+* **Timing Analysis:** Multicorner Timing Analysis confirmed optimal stability with a Total Negative Slack (TNS) of 0.0 and zero Setup/Hold violations. 
+![Multicorner Timing Analysis](assets/Final%20summary.png)
 
-*Oscilloscope verification: The capture above displays a UART data burst sent from the FPGA to the LCD. The cursor measurement of ~2.6ms perfectly aligns with the theoretical bit-width (104.16µs) of a 9600 Baud transmission for a multi-character string, visually proving the exactness of the hardware dividers.*
+### Physical Hardware Verification
+*Oscilloscope validation of the UART transmission and system delays.*
+![Physical Setup with Oscilloscope](assets/uart%20debug%20lab.jpeg)
+![Oscilloscope UART Measurement](assets/uart1.jpeg)
+
+*The capture above displays a UART data burst sent from the FPGA to the LCD. The cursor measurement of ~2.6ms perfectly aligns with the theoretical bit-width (104.16µs) of a 9600 Baud transmission for a multi-character string, visually proving the exactness of the hardware dividers.*
 
 ---
 
@@ -87,8 +99,12 @@ The entire system was rigorously validated against a Keysight Mixed Signal Oscil
 * **External SerLCD:** Connected via Arduino headers to display formatted time strings, memory stacks, overflow warnings, and dynamic status messages.
 * **Audio Module:** A custom-designed speaker amplification circuit. Driven by the FPGA's `ARDUINO_IO_11` pin, it utilizes PWM frequency division dictated by the Nios II software (`Nios_Speaker_Ctrl.v`) to output diverse audible alerts.
 
-[כאן יש להעלות תמונה: "איור 9 - ממשק המשתמש החומרתי" מתוך עמוד 14 בספר הפרויקט `book_3422.docx` או משקופית 12 במצגת]
-[כאן יש להעלות תמונה: המעגל המודפס של הרמקול `צילום מסך 2026-05-07 ב-11.31.31.jpg` ו-`11.31.11.png`]
+*Hardware Setup and User Interface functionality (Normal and Stack modes):*
+![DE10-Lite Board Overview](assets/user%20platform.png)
+![LCD UI Functionality](assets/user%20interface%20func.png)
+
+*Custom PWM Audio Amplifier Schematic:*
+![Speaker Amplifier Circuit](assets/speaker1.png)
 
 ---
 
@@ -105,13 +121,15 @@ To run this project on a physical Intel DE10-Lite board, follow these steps to p
    * Load the generated `.sof` file and click **Start** to burn the hardware logic onto the MAX 10 FPGA.
 5. **Running the Processor:** Use the Nios II Eclipse IDE to Run/Debug the software as Nios II Hardware, which will load the C code into the on-chip memory and begin execution.
 
-[כאן יש להעלות תמונה: שקופית 27 מתוך המצגת `Final_final_pres_3422.pdf` המציגה את מסך ה-Quartus Programmer ותהליך הצריבה]
+*The complete programming pipeline: From Nios II C compilation, through HEX initialization, to physical hardware flashing via Quartus Programmer.*
+![Programming Process](assets/program_process.png)
 
 ---
 
 ## 📁 Repository Structure
 
-* `rtl/` - Contains all Verilog hardware modules (`Top_System10.5.v`, `Measurement_Unit.v`, `FSM2.0.v`, `Debouncer.v`, `LCD_Driver.v`, etc.).
+* `rtl/` - Contains all Verilog hardware modules (`Top_System.v`, `Measurement_Unit.v`, `FSM.v`, `Debouncer.v`, `LCD_Driver.v`, etc.).
 * `software/` - Contains the embedded C code (`FinalCode.c`) executed on the Nios II processor.
-* `docs/` - Contains the complete Project Book (`book_3422.pdf`), Final Presentation, and AI Debugging logs.
+* `programming_files/` - Contains the ready-to-flash `.sof` and `.elf` binaries.
+* `docs/` - Contains the complete Project Book, Final Presentation, and AI Debugging logs.
 * `assets/` - Images and diagrams used in this README.
