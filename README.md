@@ -79,7 +79,7 @@ The entire system was rigorously validated against a Keysight Mixed Signal Oscil
 
 * **Timing Accuracy:** 30 physical pulse measurements were tested, ranging from 300ms to nearly 5 minutes. The system achieved a **100% success rate (0% errors)** with an average deviation of just 3.94ms, easily surpassing the project's ±50ms strict requirement.
 * **Resource Utilization:** The RTL design is incredibly efficient, utilizing only 2,404 Logic Elements (~5% of the MAX 10's capacity). 
-![Flow Summary - Resource Utilization](assets/flow%20summary.jpg)
+![Flow Summary - Resource Utilization](assets/flow%20summary.png)
 
 * **Timing Analysis:** Multicorner Timing Analysis confirmed optimal stability with a Total Negative Slack (TNS) of 0.0 and zero Setup/Hold violations. 
 ![Multicorner Timing Analysis](assets/Final%20summary.png)
