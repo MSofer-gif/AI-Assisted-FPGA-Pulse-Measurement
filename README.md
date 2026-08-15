@@ -130,6 +130,10 @@ To run this project on a physical Intel DE10-Lite board, follow these steps to p
 
 * `rtl/` - Contains all Verilog hardware modules (`Top_System.v`, `Measurement_Unit.v`, `FSM.v`, `Debouncer.v`, `LCD_Driver.v`, etc.).
 * `software/` - Contains the embedded C code (`FinalCode.c`) executed on the Nios II processor.
-* `programming_files/` - Contains the ready-to-flash `.sof` and `.elf` binaries.
-* `docs/` - Contains the complete Project Book, Final Presentation, and AI Debugging logs.
-* `assets/` - Images and diagrams used in this README.
+  * `programming files/` - Contains the ready-to-flash hardware and software binaries (`FPGA_NIOS.sof` and `lcd_final.elf`).
+* `tb_verilog/` - Contains the Verilog testbench files used for simulation and logic verification.
+* `docs/` - Contains the Final Presentation, AI Debugging logs, and additional project documentation.
+* `assets/` - Main directory for project media and documentation images.
+  * `program_process/` - Visual documentation of the system's operational flow.
+  * `time summary/` - Timing analysis reports and performance verification charts.
+* `Final_Project_Book.pdf` - The comprehensive academic project book and final report.
