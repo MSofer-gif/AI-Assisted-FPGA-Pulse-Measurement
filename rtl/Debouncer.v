@@ -1,5 +1,4 @@
-timescale 1ns/10p  \\\\ לבדוק אם רלוונטי
-
+timescale 1ns/10p 
 
 module Debouncer #(parameter COUNTER_BITS = 16) (
     input clk,
